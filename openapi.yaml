@@ -15,7 +15,7 @@ paths:
       tags:
         - Home
 
-  /login:
+  /users/login:
     summary: Authentification
     post:
       summary: S'authentifier comme administrateur
@@ -142,6 +142,17 @@ paths:
 
 components:
   schemas:
+    halLinkObject:
+      type: object
+      properties:
+        href:
+          type: string
+          format: uri
+          description: URL cible du lien
+        templated:
+          type: boolean
+          description: Indique si le lien est templatisé (facultatif)
+
     terrains:
       type: object
       properties:

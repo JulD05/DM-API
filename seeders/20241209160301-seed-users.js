@@ -13,6 +13,13 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
       },
+      {
+        pseudo: 'test',
+        password: hashedPassword,
+        role: 'user',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }
     ]);
   },
   down: async (queryInterface, Sequelize) => {

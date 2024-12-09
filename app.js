@@ -2,12 +2,29 @@ const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const yaml = require('yamljs');
 const swaggerDocument = yaml.load('./openapi.yaml');
+require('dotenv').config();
+
+
+const usersRouter = require('./routes/users');
+const terrainsRouter = require('./routes/terrains');
+const reservationsRouter = require('./routes/reservations');
 
 const app = express();
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-// Démarrage du serveur
+app.use('/users', usersRouter);
+app.use('/terrains', terrainsRouter);
+app.use('/reservations', reservationsRouter);
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Erreur interne du serveur' });
+});
+
 app.listen(3000, () => {
   console.log('Serveur démarré sur http://localhost:3000');
   console.log('Documentation disponible sur http://localhost:3000/api-docs');
