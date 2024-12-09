@@ -1,0 +1,196 @@
+openapi: 3.0.0
+info:
+  title: API de Réservation de Terrains de Badminton
+  version: 1.0.0
+paths:
+  /:
+    summary: Accueil de l'API
+    get:
+      summary: Obtenir des informations sur l'API de réservation
+      description: ''
+      operationId: rootGet
+      responses:
+        default:
+          description: Réponse par défaut en cas d'erreur
+      tags:
+        - Home
+
+  /login:
+    summary: Authentification
+    post:
+      summary: S'authentifier comme administrateur
+      description: Seuls les administrateurs peuvent s'authentifier
+      operationId: loginPost
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                pseudo:
+                  type: string
+                  default: admybad
+                password:
+                  type: string
+                  default: astrongpassword
+              required:
+                - pseudo
+                - password
+      responses:
+        '201':
+          description: Fournit un JWT pour accéder aux ressources protégées
+          content:
+            application/json:
+              examples:
+                jwtExample:
+                  summary: Exemple de réponse avec JWT
+                  value:
+                    jwt: "xx.yy.zz"
+        '401':
+          description: Échec d'authentification
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+              examples:
+                exemple1:
+                  value:
+                    message: Authentification impossible
+      tags:
+        - Administration
+
+  /terrains:
+    summary: Gestion des terrains
+    get:
+      summary: Liste des terrains
+      description: Retourne tous les terrains avec leur disponibilité
+      operationId: getTerrains
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/terrains'
+      tags:
+        - Terrains
+
+  /terrains/{id}:
+    summary: Gestion individuelle d'un terrain
+    put:
+      summary: Modifier la disponibilité d'un terrain
+      description: Permet à un administrateur de rendre un terrain indisponible
+      operationId: updateTerrainAvailability
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 0
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                disponible:
+                  type: boolean
+                  example: false
+                raisonIndisponibilite:
+                  type: string
+                  example: "Fortes pluies"
+              required:
+                - disponible
+      responses:
+        '200':
+          description: Terrain mis à jour avec succès
+        '403':
+          description: Interdit (rôle insuffisant)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+      tags:
+        - Administration
+      security:
+        - jwt: []
+
+  /reservations:
+    summary: Gestion des réservations
+    get:
+      summary: Liste des réservations
+      description: Obtenir toutes les réservations
+      operationId: getReservations
+      responses:
+        '200':
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/reservations'
+      tags:
+        - Reservations
+
+components:
+  schemas:
+    terrains:
+      type: object
+      properties:
+        _links:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/halLinkObject'
+        terrains:
+          type: array
+          description: "Liste des terrains"
+          items:
+            $ref: '#/components/schemas/terrain-detail'
+    terrain-detail:
+      type: object
+      properties:
+        id:
+          type: integer
+        nom:
+          type: string
+        disponible:
+          type: boolean
+        raisonIndisponibilite:
+          type: string
+    reservations:
+      type: object
+      properties:
+        _links:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/halLinkObject'
+        reservations:
+          type: array
+          description: "Liste des réservations"
+          items:
+            $ref: '#/components/schemas/reservation-detail'
+    reservation-detail:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        terrainId:
+          type: integer
+        dateReservation:
+          type: string
+          format: date-time
+  securitySchemes:
+    jwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

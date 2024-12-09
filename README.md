@@ -6,6 +6,8 @@
    git clone https://github.com/JulD05/DM-API.git
 
 2. Accédez au répertoire du projet
+    ```bash
+    cd DM-API
 
 3. Installez les dépendances :
     ```bash
