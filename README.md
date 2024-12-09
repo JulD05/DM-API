@@ -13,13 +13,13 @@
 
 4. Configurez la base de données dans un fichier .env:
     -Créez un fichier .env à la racine du projet
-    -Ajoutez les informations suivantes selon la configuration:
-        ```bash
-        DB_USERNAME=root
-        DB_PASSWORD=votre_mot_de_passe
-        DB_DATABASE=badminton_reservations
-        DB_HOST=127.0.0.1
-        DB_DIALECT=mysql
+    -Ajoutez les informations suivantes selon la configuration: 
+    ```bash
+    DB_USERNAME=root
+    DB_PASSWORD=votre_mot_de_passe
+    DB_DATABASE=api_reservations
+    DB_HOST=127.0.0.1
+    DB_DIALECT=mysql
     
 5. Initialisez Sequelize:
     ```bash
