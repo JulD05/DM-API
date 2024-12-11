@@ -24,6 +24,11 @@ module.exports = (sequelize, DataTypes) => {
       tableName: 'reservations', // Nom exact de la table dans la base de données
       timestamps: true // Inclut les colonnes createdAt et updatedAt
     });
+
+    Reservation.associate = (models) => {
+      Reservation.belongsTo(models.User, { foreignKey: 'userId' });
+      Reservation.belongsTo(models.Terrain, { foreignKey: 'terrainId' });
+    };
   
     return Reservation;
   };

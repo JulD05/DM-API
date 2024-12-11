@@ -17,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
       tableName: 'terrains', // Nom exact de la table dans la base de données
       timestamps: true // Inclut les colonnes createdAt et updatedAt
     });
+
+    Terrain.associate = (models) => {
+      Terrain.hasMany(models.Reservation, { foreignKey: 'terrainId' });
+    };
   
     return Terrain;
   };

@@ -27,6 +27,10 @@ module.exports = (sequelize, DataTypes) => {
         timestamps: true,
       }
     );
+
+    User.associate = (models) => {
+      User.hasMany(models.Reservation, { foreignKey: 'userId' });
+    };
   
     return User;
   };

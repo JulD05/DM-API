@@ -7,7 +7,6 @@ paths:
     summary: Accueil de l'API
     get:
       summary: Obtenir des informations sur l'API de réservation
-      description: ''
       operationId: rootGet
       responses:
         default:
@@ -37,7 +36,7 @@ paths:
                 - pseudo
                 - password
       responses:
-        '201':
+        "201":
           description: Fournit un JWT pour accéder aux ressources protégées
           content:
             application/json:
@@ -46,99 +45,301 @@ paths:
                   summary: Exemple de réponse avec JWT
                   value:
                     jwt: "xx.yy.zz"
-        '401':
+        "401":
           description: Échec d'authentification
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                  - message
-              examples:
-                exemple1:
-                  value:
-                    message: Authentification impossible
       tags:
         - Administration
 
-  /terrains:
-    summary: Gestion des terrains
+  /users/{id}:
     get:
-      summary: Liste des terrains
-      description: Retourne tous les terrains avec leur disponibilité
-      operationId: getTerrains
-      responses:
-        '200':
-          description: OK
-          content:
-            application/hal+json:
-              schema:
-                $ref: '#/components/schemas/terrains'
-      tags:
-        - Terrains
-
-  /terrains/{id}:
-    summary: Gestion individuelle d'un terrain
-    put:
-      summary: Modifier la disponibilité d'un terrain
-      description: Permet à un administrateur de rendre un terrain indisponible
-      operationId: updateTerrainAvailability
+      summary: Obtenir les détails d'un utilisateur
+      operationId: getUserDetails
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: integer
-            minimum: 0
+      responses:
+        "200":
+          description: Détails d'un utilisateur
+          content:
+            application/hal+json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/halResource"
+                  - type: object
+                    properties:
+                      pseudo:
+                        type: string
+                      role:
+                        type: string
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+        "404":
+          description: Utilisateur non trouvé
+      tags:
+        - Utilisateurs
+
+  /users/{id}/reservations:
+    get:
+      summary: Liste des réservations d’un utilisateur
+      operationId: getUserReservations
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Réservations d’un utilisateur
+          content:
+            application/hal+json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/halResource"
+                  - type: object
+                    properties:
+                      _embedded:
+                        type: object
+                        properties:
+                          reservations:
+                            type: array
+                            items:
+                              $ref: "#/components/schemas/reservations"
+        "404":
+          description: Aucune réservation trouvée
+      tags:
+        - Utilisateurs
+
+  /terrains:
+    get:
+      summary: Liste des terrains
+      operationId: getTerrains
+      responses:
+        "200":
+          description: Liste des terrains
+          content:
+            application/hal+json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/halResource"
+                  - type: object
+                    properties:
+                      _embedded:
+                        type: object
+                        properties:
+                          terrains:
+                            type: array
+                            items:
+                              $ref: "#/components/schemas/terrains"
+      tags:
+        - Terrains
+
+  /terrains/{id}:
+    get:
+      summary: Obtenir les détails d’un terrain
+      operationId: getTerrainDetails
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Détails d’un terrain
+          content:
+            application/hal+json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/halResource"
+                  - type: object
+                    properties:
+                      nom:
+                        type: string
+                      disponible:
+                        type: boolean
+                      raisonIndisponibilite:
+                        type: string
+        "404":
+          description: Terrain non trouvé
+      put:
+        summary: Modifier la disponibilité d'un terrain
+        operationId: updateTerrainAvailability
+        parameters:
+          - name: id
+            in: path
+            required: true
+            schema:
+              type: integer
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  disponible:
+                    type: boolean
+                  raisonIndisponibilite:
+                    type: string
+        responses:
+          "200":
+            description: Terrain mis à jour avec succès
+          "403":
+            description: Interdit (rôle insuffisant)
+        tags:
+          - Administration
+        security:
+          - jwt: []
+
+  /reservations:
+    get:
+      summary: Liste des réservations
+      operationId: getReservations
+      responses:
+        "200":
+          description: Liste des réservations
+          content:
+            application/hal+json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/halResource"
+                  - type: object
+                    properties:
+                      _embedded:
+                        type: object
+                        properties:
+                          reservations:
+                            type: array
+                            items:
+                              $ref: "#/components/schemas/reservations"
+      tags:
+        - Reservations
+    post:
+      summary: Créer une réservation
+      operationId: createReservation
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
-                disponible:
-                  type: boolean
-                  example: false
-                raisonIndisponibilite:
+                terrainId:
+                  type: integer
+                dateReservation:
                   type: string
-                  example: "Fortes pluies"
+                  format: date-time
               required:
-                - disponible
+                - terrainId
+                - dateReservation
       responses:
-        '200':
-          description: Terrain mis à jour avec succès
-        '403':
-          description: Interdit (rôle insuffisant)
+        "201":
+          description: Réservation créée
+      tags:
+        - Reservations
+
+  /reservations/{id}:
+    get:
+      summary: Obtenir les détails d’une réservation
+      operationId: getReservationDetails
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Détails d’une réservation
+          content:
+            application/hal+json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/halResource"
+                  - type: object
+                    properties:
+                      userId:
+                        type: integer
+                      terrainId:
+                        type: integer
+                      dateReservation:
+                        type: string
+                        format: date-time
+        "404":
+          description: Réservation non trouvée
+      put:
+        summary: Modifier une réservation
+        operationId: updateReservation
+        parameters:
+          - name: id
+            in: path
+            required: true
+            schema:
+              type: integer
+        requestBody:
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  message:
+                  terrainId:
+                    type: integer
+                  dateReservation:
                     type: string
-      tags:
-        - Administration
-      security:
-        - jwt: []
-
-  /reservations:
-    summary: Gestion des réservations
-    get:
-      summary: Liste des réservations
-      description: Obtenir toutes les réservations
-      operationId: getReservations
-      responses:
-        '200':
-          description: OK
-          content:
-            application/hal+json:
-              schema:
-                $ref: '#/components/schemas/reservations'
+                    format: date-time
+                required:
+                  - terrainId
+                  - dateReservation
+        responses:
+          "200":
+            description: Réservation modifiée avec succès
+        "404":
+          description: Réservation non trouvée
+      delete:
+        summary: Supprimer une réservation
+        operationId: deleteReservation
+        parameters:
+          - name: id
+            in: path
+            required: true
+            schema:
+              type: integer
+        responses:
+          "200":
+            description: Réservation supprimée avec succès
       tags:
         - Reservations
+
+  /graphql:
+    post:
+      summary: Endpoint GraphQL
+      description: Permet d'exécuter des requêtes GraphQL sur l'API.
+      operationId: executeGraphql
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                  description: Requête GraphQL à exécuter.
+                variables:
+                  type: object
+                  description: Variables pour la requête GraphQL.
+      responses:
+        "200":
+          description: Résultat de la requête GraphQL.
+        "400":
+          description: Requête GraphQL invalide.
+      tags:
+        - GraphQL
 
 components:
   schemas:
@@ -148,24 +349,30 @@ components:
         href:
           type: string
           format: uri
-          description: URL cible du lien
+          description: URL cible du lien.
         templated:
           type: boolean
-          description: Indique si le lien est templatisé (facultatif)
+          description: Indique si le lien est templatisé (facultatif).
 
-    terrains:
+    halEmbeddedObject:
+      type: object
+      description: Ressources liées (imbriquées dans la réponse).
+
+    halResource:
       type: object
       properties:
         _links:
           type: object
+          description: Liens hypermédia.
           additionalProperties:
-            $ref: '#/components/schemas/halLinkObject'
-        terrains:
-          type: array
-          description: "Liste des terrains"
-          items:
-            $ref: '#/components/schemas/terrain-detail'
-    terrain-detail:
+            $ref: "#/components/schemas/halLinkObject"
+        _embedded:
+          type: object
+          description: Ressources imbriquées.
+          additionalProperties:
+            $ref: "#/components/schemas/halEmbeddedObject"
+
+    terrains:
       type: object
       properties:
         id:
@@ -176,19 +383,8 @@ components:
           type: boolean
         raisonIndisponibilite:
           type: string
+
     reservations:
-      type: object
-      properties:
-        _links:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/halLinkObject'
-        reservations:
-          type: array
-          description: "Liste des réservations"
-          items:
-            $ref: '#/components/schemas/reservation-detail'
-    reservation-detail:
       type: object
       properties:
         id:
@@ -200,6 +396,7 @@ components:
         dateReservation:
           type: string
           format: date-time
+
   securitySchemes:
     jwt:
       type: http
