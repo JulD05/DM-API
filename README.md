@@ -144,7 +144,7 @@ Header:
     | Content-Type  | application/json    |
     | Authorization | Bearer <votre_token>|
 
-Body en JSON:
+Body en JSON: <br>
     ```bash
     {
         "query": "query { availableSlots(date: \"2024-11-27\", terrain: \"A\") { time isAvailable } }"
