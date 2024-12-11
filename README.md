@@ -22,6 +22,7 @@
     DB_DATABASE=api_reservations
     DB_HOST=127.0.0.1
     DB_DIALECT=mysql
+    JWT_SECRET=votre_secret
     
 5. Initialisez Sequelize:
     ```bash
@@ -30,5 +31,18 @@
 6. Créez la base de données
 
 7. Appliquez les migrations
+Pour créer les tables utiles en base, j'ai réalisé au préalable les migrations. 
     ```bash
     npx sequelize-cli db:migrate
+
+8. Ajoutez les seeders
+Pour obtenir des données en résultat, j'ai réalisé des seeders avec un jeu de données de test au préalable. Cette commmande permettra d'ajouté le jeu de données.
+    ```bash
+    npx sequelize-cli db:seed:all
+
+9. Lancez le serveur
+    ```bash
+    node app.js
+
+10. Utilisez Postman (ou curl) pour tester l'API
+
