@@ -18,8 +18,8 @@
     ```bash
     npm install
 
-4. Configurez la base de données dans un fichier .env:
-    -Créez un fichier .env à la racine du projet
+4. Configurez la base de données dans un fichier .env: <br>
+    -Créez un fichier .env à la racine du projet <br>
     -Ajoutez les informations suivantes selon la configuration: 
     ```bash
     DB_USERNAME=root
@@ -51,7 +51,7 @@ Pour obtenir des données en résultat, j'ai réalisé des seeders avec un jeu d
 
 ## Tester l'API
 Utilisez CURL (ou Postman) pour tester l'API.
-1. Authentification
+1. Authentification <br>
 Route: POST /users/login
     ```bash
     curl -X POST http://localhost:3000/users/login \
@@ -61,31 +61,31 @@ Route: POST /users/login
     "password": "astrongpassword"
     }'
 
-2. Obtenir les détails d'un utilisateur
+2. Obtenir les détails d'un utilisateur <br>
 Route: GET /users/:id
     ```bash
     curl -X GET http://localhost:3000/users/1 \
     -H "Authorization: Bearer <votre_jwt>"
 
-3. Obtenir les réservations d'un utilisateur
+3. Obtenir les réservations d'un utilisateur <br>
 Route: GET /users/:id/reservations
     ```bash
     curl -X GET http://localhost:3000/users/1/reservations \
     -H "Authorization: Bearer <votre_jwt>"
 
-4. Liste des terrains
+4. Liste des terrains <br>
 Route: GET /terrains
     ```bash
     curl -X GET http://localhost:3000/terrains \
     -H "Authorization: Bearer <votre_jwt>"
 
-5. Obtenir les détails d'un terrain
+5. Obtenir les détails d'un terrain <br>
 Route: GET /terrains/:id
     ```bash
     curl -X GET http://localhost:3000/terrains/1 \
     -H "Authorization: Bearer <votre_jwt>"
 
-6. Modifier la disponibilité d'un terrain
+6. Modifier la disponibilité d'un terrain <br>
 Route: PUT /terrains/:id
     ```bash
     curl -X PUT http://localhost:3000/terrains/1 \
@@ -96,7 +96,7 @@ Route: PUT /terrains/:id
       "raisonIndisponibilite": "Maintenance"
     }'
 
-7. Créer une réservation
+7. Créer une réservation <br>
 Route: POST /reservations
     ```bash
     curl -X POST http://localhost:3000/reservations \
@@ -107,19 +107,19 @@ Route: POST /reservations
       "dateReservation": "2024-11-27T10:00:00Z"
     }'
 
-8. Liste des réservations
+8. Liste des réservations <br>
 Route: GET /reservations
     ```bash
     curl -X GET http://localhost:3000/reservations \
     -H "Authorization: Bearer <votre_jwt>"
 
-9. Obtenir les détails d'une réservation
+9. Obtenir les détails d'une réservation <br>
 Route: GET /reservations/:id
     ```bash
     curl -X GET http://localhost:3000/reservations/1 \
     -H "Authorization: Bearer <votre_jwt>"
 
-10. Modifier une réservation
+10. Modifier une réservation <br>
 Route: PUT /reservations/:id
     ```bash
     curl -X PUT http://localhost:3000/reservations/1 \
@@ -130,14 +130,14 @@ Route: PUT /reservations/:id
     "dateReservation": "2024-11-27T15:45:00Z"
     }'
 
-11. Supprimer une réservation
-Route: DELETE /reservations/:id
+11. Supprimer une réservation <br>
+Route: DELETE /reservations/:id <br>
     ```bash
     curl -X DELETE http://localhost:3000/reservations/1 \
     -H "Authorization: Bearer <votre_jwt>"
 
-12. Requête pour les créneaux disponibles avec Postman (GraphQL)
-Route: POST http://localhost:3000/graphql
+12. Requête pour les créneaux disponibles avec Postman (GraphQL) <br>
+Route: POST http://localhost:3000/graphql <br>
 Header:
     | Colonne 1     | Colonne 2           |
     |---------------|---------------------|
